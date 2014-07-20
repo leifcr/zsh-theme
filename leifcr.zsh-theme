@@ -37,7 +37,7 @@ prompt_segment() {
   [[ -n $1 ]] && bg="%K{$1}" || bg="%k"
   [[ -n $2 ]] && fg="%F{$2}" || fg="%f"
   if [[ $CURRENT_BG != 'NONE' && $1 != $CURRENT_BG ]]; then
-    echo -n " %{$bg%F{$CURRENT_BG}%}$SEGMENT_SEPARATOR%{$fg%} "
+    echo -n " %{$bg%F{$CURRENT_BG}%}%{$SEGMENT_SEPARATOR%}%{$fg%} "
   else
     echo -n "%{$bg%}%{$fg%} "
   fi
@@ -48,7 +48,7 @@ prompt_segment() {
 # End the prompt, closing any open segments
 prompt_end() {
   if [[ -n $CURRENT_BG ]]; then
-    echo -n " %{%k%F{$CURRENT_BG}%}$SEGMENT_SEPARATOR"
+    echo -n " %{%k%F{$CURRENT_BG}%}%{$SEGMENT_SEPARATOR%}"
   else
     echo -n "%{%k%}"
   fi
@@ -168,14 +168,16 @@ prompt_status() {
 }
 
 build_rprompt() {
+  setopt promptsubst
+  setopt promptpercent
   # prompt_segment blue black
   prompt_date
 }
 
 prompt_date() {
-  echo "%F{blue}%K{none}$INVERSE_SEGMENT_SEPARATOR$(prompt_segment blue black)%D{%H:%M:%S} %F{blue}%K{none}$SEGMENT_SEPARATOR"
-  # prompt_segment blue black
-  # RPROMPT="$TEST"$INVERSE_SEGMENT_SEPARATOR"%k%F{black}%K{white} %D{%H:%M:%S} %f%k"
+  echo -n "%F{blue}%K{none}%{$INVERSE_SEGMENT_SEPARATOR%}"
+  echo -n "%F{black}%K{blue}%D{%H:%M:%S}"
+  echo -n "%F{blue}%K{none}%{$SEGMENT_SEPARATOR%}"
 }
 
 
@@ -187,9 +189,8 @@ build_prompt() {
   prompt_context
   prompt_dir
   prompt_git
-  prompt_hg
   prompt_end
 }
 
-PROMPT='%{%f%b%k%}$(build_prompt) '
+PROMPT='%{%f%b%k%}$(build_prompt)'
 RPROMPT='$(build_rprompt)'
