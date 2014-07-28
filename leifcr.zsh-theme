@@ -1,33 +1,27 @@
-# leifcr's Theme base on
+# leifcr's oh my zsh Theme
 #
-# agnoster's Theme - https://gist.github.com/3712874
-# A Powerline-inspired theme for ZSH
+# Based on
+# agnoster's Theme - https://gist.github.com/3712874 - A Powerline-inspired theme for ZSH
+# jeremyFreeAgent's Theme - https://github.com/jeremyFreeAgent/oh-my-zsh-powerline-theme
 #
 # # README
 #
 # In order for this theme to render correctly, you will need a
 # [Powerline-patched font](https://github.com/Lokaltog/powerline-fonts).
 #
-# In addition, I recommend the
-# [Solarized theme](https://github.com/altercation/solarized/) and, if you're
-# using it on Mac OS X, [iTerm 2](http://www.iterm2.com/) over Terminal.app -
-# it has significantly better color fidelity.
-#
-# # Goals
-#
-# The aim of this theme is to only show you *relevant* information. Like most
-# prompts, it will only show git information when in a git working directory.
-# However, it goes a step further: everything from the current user and
-# hostname to whether the last call exited with an error to whether background
-# jobs are running in this shell will all be displayed automatically when
-# appropriate.
+# Use [Terminator](https://launchpad.net/~gnome-terminator) for your console.
+# or iTerm2 on osx if you prefer.
+# There are some issues with right prompt on osx if you have zsh 4.x.
+# Upgrade to zsh 5.x to solve the issue.
 
 ### Segment drawing
 # A few utility functions to make it easy and re-usable to draw segmented prompts
 
 CURRENT_BG='NONE'
-SEGMENT_SEPARATOR=''
-INVERSE_SEGMENT_SEPARATOR=''
+# SEGMENT_SEPARATOR=''
+# INVERSE_SEGMENT_SEPARATOR=''
+SEGMENT_SEPARATOR=$'\ue0b0'
+INVERSE_SEGMENT_SEPARATOR=$'\ue0b2'
 
 # Begin a segment
 # Takes two arguments, background and foreground. Both can be omitted,
@@ -37,7 +31,7 @@ prompt_segment() {
   [[ -n $1 ]] && bg="%K{$1}" || bg="%k"
   [[ -n $2 ]] && fg="%F{$2}" || fg="%f"
   if [[ $CURRENT_BG != 'NONE' && $1 != $CURRENT_BG ]]; then
-    echo -n " %{$bg%F{$CURRENT_BG}%}%{$SEGMENT_SEPARATOR%}%{$fg%} "
+    echo -n " %{$bg%F{$CURRENT_BG}%}$SEGMENT_SEPARATOR%{$fg%} "
   else
     echo -n "%{$bg%}%{$fg%} "
   fi
@@ -48,7 +42,7 @@ prompt_segment() {
 # End the prompt, closing any open segments
 prompt_end() {
   if [[ -n $CURRENT_BG ]]; then
-    echo -n " %{%k%F{$CURRENT_BG}%}%{$SEGMENT_SEPARATOR%}"
+    echo -n " %{%k%F{$CURRENT_BG}%}$SEGMENT_SEPARATOR"
   else
     echo -n "%{%k%}"
   fi
@@ -172,12 +166,16 @@ build_rprompt() {
   setopt promptpercent
   # prompt_segment blue black
   prompt_date
+  echo -n "%{%f%}"
+  echo -n "%{%k%}"
+  CURRENT_BG=''
+
 }
 
 prompt_date() {
-  echo -n "%F{blue}%K{none}%{$INVERSE_SEGMENT_SEPARATOR%}"
+  echo -n "%F{blue}%K{none}$INVERSE_SEGMENT_SEPARATOR"
   echo -n "%F{black}%K{blue}%D{%H:%M:%S}"
-  echo -n "%F{blue}%K{none}%{$SEGMENT_SEPARATOR%}"
+  echo -n "%F{blue}%K{none}$SEGMENT_SEPARATOR"
 }
 
 
